@@ -124,8 +124,8 @@ void menu_8(){//SHOW ALL READERS
     cout << "===========================================================================" << endl;
     cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Book_counts \t" << endl;
     cout << "===========================================================================" << endl;
-    //for(unsigned int i = 0; i < vec.size()-1; i++) {cout << vec[i];}
-    copy(vec.begin(), vec.end(), ostream_iterator<Reader>(cout, ";"));
+    for(unsigned int i = 0; i < vec.size()-1; i++) {cout << vec[i];}
+    //copy(vec.begin(), vec.end(), ostream_iterator<Reader>(cout, ";"));
     cout << endl;
 //----------------------------------------------------------------------
     cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
