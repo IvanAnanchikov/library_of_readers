@@ -67,14 +67,25 @@ void menu_5(){//ADD READER
         cin>>ReaderObject.LastName;
         cout<<"> type reader's Library Card Number\n";
         cin>>ReaderObject.LibraryCardNmb;
-        ReaderObject.book_counts = 2;
+        ReaderObject.book_counts = 0;
 //--------------- записываем в файл Reader --------------------------------
     ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
     if (!file_w.is_open()) {
      cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
     }
     else{
-        file_w.write((char*)&ReaderObject,sizeof ReaderObject); //Записали объект в открытый файл
+        //file_w.write((char*)&ReaderObject,sizeof ReaderObject); //Записали объект в открытый файл
+        //file.write(reinterpret_cast<char*>(&it->second.ID), sizeof(it->second.ID));
+
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.LibraryCardNmb),sizeof ReaderObject.LibraryCardNmb);
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.FirstName),sizeof ReaderObject.FirstName);
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.LastName),sizeof ReaderObject.LastName);
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.book_counts),sizeof ReaderObject.book_counts);
+
+//        file_w.write((char*)&ReaderObject.LibraryCardNmb,sizeof ReaderObject.LibraryCardNmb);
+//        file_w.write((char*)&ReaderObject.FirstName,sizeof ReaderObject.FirstName);
+//        file_w.write((char*)&ReaderObject.LastName,sizeof ReaderObject.LastName);
+//        file_w.write((char*)&ReaderObject.book_counts,sizeof ReaderObject.book_counts);
         file_w.clear();
         file_w.close(); //Закрыли открытый файл
     }
@@ -170,18 +181,19 @@ void menu_6(){//DELETE READER
 
                       for(vector<Reader>::iterator it = vec.begin(); it != vec.end(); it++)
                       {
-                          file_w << it->LibraryCardNmb;
-                          file_w << it->FirstName;
-                          file_w << it->LastName;
-                          file_w << it->book_counts;
+//                        file_w.write(reinterpret_cast<char*>(&it), sizeof(Reader));//попытка целиком объект класса отправить в файл
+                          file_w.write(reinterpret_cast<char*>(&it->LibraryCardNmb), sizeof(it->LibraryCardNmb));
+                          file_w.write(reinterpret_cast<char*>(&it->FirstName), sizeof(it->FirstName));
+                          file_w.write(reinterpret_cast<char*>(&it->LastName), sizeof(it->LastName));
+                          file_w.write(reinterpret_cast<char*>(&it->book_counts), sizeof(it->book_counts));
 
-//                                    it->LibraryCardNmb << " ";
-//                          for(size_t j = 0; j < Reader::n; ++j)
-//                            file_w  << i-> answer[j] << " ";
-//                          file_w << std::endl;
+//                          file_w << it->LibraryCardNmb;
+//                          file_w << it->FirstName;
+//                          file_w << it->LastName;
+//                          file_w << it->book_counts;
                       }
 
-                       //copy(vec.begin(), vec.end(), ostream_iterator<Reader>(file_w));
+                       //copy(vec.begin(), vec.end(), ostream_iterator<Reader>(file_w));//copy использует переопределенный оператор <<
                        file_w.clear();
                        file_w.close(); //Закрыли открытый файл
                      }
