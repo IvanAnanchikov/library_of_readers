@@ -108,46 +108,80 @@ void menu_6(){//DELETE READER
                cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
               }
               else{
+                      unsigned int cnt = 0;
                       vec.clear();//очистить вектор
                       file_r.seekp(0,ios::beg);//перемещаем указатель позиционирования файла в начало
                       cout << "vec.size after cleaning" << vec.size() << endl;
-                      while (!file_r.eof())
-                      {
-                        file_r.read((char*)&ReaderObject,sizeof ReaderObject);
+                      //while (!file_r.eof())
+                      while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof())
+                      {                       
+                        //file_r.read((char*)&ReaderObject,sizeof ReaderObject);
                         if(ReaderObject.LibraryCardNmb == IDForDeleting) {
                            cout << "READER for deleting was found\n";
                         }
-                        else {vec.push_back(ReaderObject);}
+                        else {vec.push_back(ReaderObject);cnt++;}
                       }
                       cout << "vec.size after pushing" << vec.size() << endl;
-                      cout << "INFORMATION ABOUT READERS:" << endl;
-                      cout << "===========================================================================" << endl;
-                      cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Book_counts \t" << endl;
-                      cout << "===========================================================================" << endl;
-                      for(unsigned int i = 0; i < vec.size()-1; i++) {cout << vec[i];}
+                      cout << "cnt: " << cnt << endl;
+//                      cout << "INFORMATION ABOUT READERS:" << endl;
+//                      cout << "===========================================================================" << endl;
+//                      cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Book_counts \t" << endl;
+//                      cout << "===========================================================================" << endl;
+//                      for(unsigned int i = 0; i < vec.size()-1; i++) {cout << vec[i];}
 
                    file_r.clear();
                    file_r.close();
                   }
           //-----------------------------------------------------------------------------
+          //++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
+              if( remove( "reader.bin" ) != 0 )// удаление файла
+                  cout << "Error deleting file reader.bin" << endl;
+              else
+                  cout << "File reader.bin successfully deleted" << endl;
+          //++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
           //--------------- записываем в файл reader.bin всех кроме удаленного ----------
-                  fstream file_w("reader.bin",ios::binary|ios::out|ios::trunc);//trunc - уничтожить содержимое
+                  //fstream file_w("reader.bin",ios::binary|ios::out|ios::trunc);//trunc - уничтожить содержимое
+                  ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
                   if (!file_w.is_open()) {
                    cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
                   }
                   else{
-                       //file_w.write((char*)&ReaderObject,sizeof ReaderObject);
-//                       for(unsigned int i = 0; i < vec.size(); i++){
-//                           cout << vec.at(i) << endl;
-//                       }
-
-                       //for(unsigned int i = 0; i < vec.size()-1; i++){
+//                            for(unsigned int i = 0; i < vec.size(); i++)
+//                            file_w.write((char*)&ReaderObject,sizeof ReaderObject);
                        // file_w.write((char*)&vec[i],sizeof ReaderObject);
                        //}
 //                       for (auto it = vec.begin(); it != vec.end(); it++)
 //                       {
+//                           ReaderObject = vec.c();//at(it)
+//                           file_w.write((char*)&ReaderObject,sizeof ReaderObject);
 //                           //file_w.write((char*)&vec.at(it),sizeof ReaderObject);
 //                       }
+                       //copy(vec.begin(), vec.end(), ostream_iterator<Reader>(cout, " "));
+
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//                      for(std::vector<Test>::iterator i = tst.begin(); i != tst.end(); ++i)
+//                      {
+//                          om << i->question << " ";
+//                          for(size_t j = 0; j < Test::n; ++j)
+//                            om  << i-> answer[j] << " ";
+//                          om << std::endl;
+//                      }
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+                      for(vector<Reader>::iterator it = vec.begin(); it != vec.end(); it++)
+                      {
+                          file_w << it->LibraryCardNmb;
+                          file_w << it->FirstName;
+                          file_w << it->LastName;
+                          file_w << it->book_counts;
+
+//                                    it->LibraryCardNmb << " ";
+//                          for(size_t j = 0; j < Reader::n; ++j)
+//                            file_w  << i-> answer[j] << " ";
+//                          file_w << std::endl;
+                      }
+
+                       //copy(vec.begin(), vec.end(), ostream_iterator<Reader>(file_w));
                        file_w.clear();
                        file_w.close(); //Закрыли открытый файл
                      }
@@ -174,21 +208,20 @@ void menu_8(){//SHOW ALL READERS
     bool Menu = true;
     while(Menu){
         menu_title();
-        cout<<"This is \"SHOW ALL READERS from BINARY\" menu\n";
+        cout<<"This is \"SHOW ALL READERS\" menu\n";
         //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                    ifstream ifile("reader.bin", ios::binary);
-                    //Notes  Note;			    // структурированная переменная
-                    char str[80];			    // статический буфер строки
+                    ifstream file_r("reader.bin", ios::binary);
+                    char str[80];
                     cout << "===========================================================================" << endl;
                     cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Book_counts \t" << endl;
                     cout << "===========================================================================" << endl;
                     // Считывать и отображать строки в цикле, пока не eof
-                    while (!ifile.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
+                    while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
                         sprintf(str, "\t%d\t\t%s\t\t%s\t\t%d",
                         ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, ReaderObject.book_counts);
                         cout << str << endl;
                     }
-                    ifile.close();		    // закрыть прочитанный файл
+                    file_r.close();		    // закрыть прочитанный файл
         //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 //--------------- считываем из файла Reader --------------------------------
 //    fstream file_r("reader.bin",ios::binary|ios::in);
