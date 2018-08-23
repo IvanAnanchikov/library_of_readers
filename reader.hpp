@@ -6,8 +6,10 @@
 class Reader{
 public:
     int LibraryCardNmb;
-    std::string LastName;
-    std::string FirstName;
+//    std::string LastName;
+//    std::string FirstName;
+    char LastName[16];
+    char FirstName[16];
     int book_counts;
     //Reader (int a, std::string b, std::string c){LibraryCardNmb = a; LastName = b; FirstName = c;}
     Reader(){std::cout << "plain constructor of reader" << std::endl;}
