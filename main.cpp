@@ -15,14 +15,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     char ch_key;
     bool MainMenu = true;
-    if( remove( "reader.bin" ) != 0 )
-        cout << "Error deleting file reader.bin" << endl;
-    else
-        cout << "File reader.bin successfully deleted" << endl;
-    if( remove( "book.bin" ) != 0 )
-        cout << "Error deleting file book.bin" << endl;
-    else
-        cout << "File book.bin successfully deleted" << endl;
+
     while(MainMenu){
        /* 1 Взять книгу читателю 2 вернуть книгу
         * 3 добавить книгу 		 4 удалить книгу

@@ -12,6 +12,7 @@ public:
     int Year;
     char Publisher[16];
     int Count;
+    //bool Status;
 };
 
 #endif // BOOK_HPP

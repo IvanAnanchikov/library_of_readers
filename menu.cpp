@@ -36,26 +36,28 @@ void menu_1(){//TAKE A BOOK
     char ch_key;
     int ReaderNumber;
     int BookNumber;
-    vector<Reader> vec;
     Reader ReaderObject;
+    vector<Reader> vec;
+    Book BookObject;
+    vector<Book> vec_b;
+    unsigned int coincidence = 0;
     bool Menu = true;
     while(Menu){
         menu_title();
         cout<<"This is \"TAKE A BOOK\" menu\n";
         cout<<" "<<endl;
-        cout<<"> type reader's number of Library Card\n";
+        cout<<"> type Reader's number of Library Card\n";
         cin>>ReaderNumber;      
-        cout<<"> type book's Library Number\n";
+        cout<<"> type Book's Library Number\n";
         cin>>BookNumber;
-
-        //прочитать инфу про читателя
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //прочитать инфу про читателя, добавить книгу, редактировать файл reader
         //--------------- считываем из файла reader.bin --------------------------------
             fstream file_r("reader.bin",ios::binary|ios::in);
             if (!file_r.is_open()) {
              cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
             }
             else{
-                    unsigned int coincidence = 0;
                     vec.clear();
                     file_r.seekp(0,ios::beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof())
@@ -72,7 +74,7 @@ void menu_1(){//TAKE A BOOK
                            else{//добавляем новую книгу и увеличиваем количество книг
                               ReaderObject.book_IDs[ReaderObject.book_counts] = BookNumber;
                               ReaderObject.book_counts++;
-                              cout << "book is taken OK\n" << endl;
+                              cout << endl << "Book is taken OK\n" << endl;
                            }
                       }
                       vec.push_back(ReaderObject);
@@ -100,20 +102,62 @@ void menu_1(){//TAKE A BOOK
                         }
                         file_w.clear();
                         file_w.close();
-                       }
+                    }
            //----------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //редактировать файл book, уменьшить количество книг, выставить статус книги
+          //--------------- считываем из файла book.bin --------------------------------
+             if(coincidence != 0)
+             {
+                        fstream file_rb("book.bin",ios::binary|ios::in);
+                        if (!file_rb.is_open()) {
+                         cout << "The file \"book.bin\" cannot be opened or created..." << endl;
+                        }
+                        else{
+                                vec_b.clear();
+                                file_rb.seekp(0,ios::beg);
+                                while (!file_rb.read((char*)&BookObject, sizeof(Book)).eof())
+                                {
+                                  if(BookObject.BookUniqueNumber == BookNumber){
+                                     if(BookObject.Count>0){BookObject.Count--;
+                                          cout << "Book with UniqueNumber " << BookNumber << \
+                                                  " successfully moved to reader with LibraryCardNumber " << ReaderNumber << endl;
+                                     }
+                                     else{cout << "Database management error!" << endl;
+                                          cout << "Unfortunately there is no available book in the database." << endl;
+                                          cout << "All books with UniqueNumber " << BookObject.BookUniqueNumber << " are in reader's hands" << endl;
+                                     }
+                                  }
+                                  vec_b.push_back(BookObject);
+                                }
+                                file_rb.clear();
+                                file_rb.close();
+                            }
+                 //-----------------------------------------------------------------------------
+                 remove_book_bin();
+                 //--------------- записываем в файл book.bin измененную информацию ------------
+                            ofstream file_wb("book.bin",ios::binary|ios::out|ios::app);
+                            if (!file_wb.is_open()) {
+                             cout << "The file \"book.bin\" cannot be opened or created..." << endl;
+                            }
+                            else{
+                                  for(vector<Book>::iterator it = vec_b.begin(); it != vec_b.end(); it++)
+                                  {
+                                    file_wb.write(reinterpret_cast<char*>(&it->BookUniqueNumber), sizeof(it->BookUniqueNumber));
+                                    file_wb.write(reinterpret_cast<char*>(&it->BookName), sizeof(it->BookName));
+                                    file_wb.write(reinterpret_cast<char*>(&it->Author), sizeof(it->Author));
+                                    file_wb.write(reinterpret_cast<char*>(&it->CodeISBN), sizeof(it->CodeISBN));
+                                    file_wb.write(reinterpret_cast<char*>(&it->Pages), sizeof(it->Pages));
+                                    file_wb.write(reinterpret_cast<char*>(&it->Year), sizeof(it->Year));
+                                    file_wb.write(reinterpret_cast<char*>(&it->Publisher), sizeof(it->Publisher));
+                                    file_wb.write(reinterpret_cast<char*>(&it->Count), sizeof(it->Count));
+                                  }
+                                  file_wb.clear();
+                                  file_wb.close();
+                            }
+            }
+           //----------------------------------------------------------------------
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
         switch((ch_key = _getch()))
         {
@@ -226,8 +270,8 @@ remove_book_bin();
          cout << "The file \"book.bin\" cannot be opened or created..." << endl;
         }
         else{
-            for(vector<Book>::iterator it = vec.begin(); it != vec.end(); it++)
-            {
+              for(vector<Book>::iterator it = vec.begin(); it != vec.end(); it++)
+              {
                 file_w.write(reinterpret_cast<char*>(&it->BookUniqueNumber), sizeof(it->BookUniqueNumber));
                 file_w.write(reinterpret_cast<char*>(&it->BookName), sizeof(it->BookName));
                 file_w.write(reinterpret_cast<char*>(&it->Author), sizeof(it->Author));
@@ -236,10 +280,10 @@ remove_book_bin();
                 file_w.write(reinterpret_cast<char*>(&it->Year), sizeof(it->Year));
                 file_w.write(reinterpret_cast<char*>(&it->Publisher), sizeof(it->Publisher));
                 file_w.write(reinterpret_cast<char*>(&it->Count), sizeof(it->Count));
-            }
-            file_w.clear();
-            file_w.close();
-           }
+              }
+              file_w.clear();
+              file_w.close();
+        }
 //----------------------------------------------------------------------
 
     cout << "> type ESC to go back to previous menu\n" << " " << endl;
@@ -344,18 +388,18 @@ void menu_6(){//DELETE READER
                    cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
                   }
                   else{
-                      for(vector<Reader>::iterator it = vec.begin(); it != vec.end(); it++)
-                      {
+                        for(vector<Reader>::iterator it = vec.begin(); it != vec.end(); it++)
+                        {
                           file_w.write(reinterpret_cast<char*>(&it->LibraryCardNmb), sizeof(it->LibraryCardNmb));
                           file_w.write(reinterpret_cast<char*>(&it->FirstName), sizeof(it->FirstName));
                           file_w.write(reinterpret_cast<char*>(&it->LastName), sizeof(it->LastName));
                           file_w.write(reinterpret_cast<char*>(&it->Passport), sizeof(it->Passport));
                           file_w.write(reinterpret_cast<char*>(&it->book_counts), sizeof(it->book_counts));
                           file_w.write(reinterpret_cast<char*>(&it->book_IDs), sizeof(it->book_IDs));
-                      }
-                      file_w.clear();
-                      file_w.close();
-                     }
+                        }
+                        file_w.clear();
+                        file_w.close();
+                 }
          //----------------------------------------------------------------------
 
               cout << "> type ESC to go back to previous menu\n" << " " << endl;
@@ -429,7 +473,7 @@ void menu_8(){//SHOW ALL READERS
                     cout << "===============================================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t      %d; %d; %d; %d",
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t\t\t%d; %d; %d; %d",
                         ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, \
                         ReaderObject.Passport, ReaderObject.book_counts, ReaderObject.book_IDs[0],\
                         ReaderObject.book_IDs[1],ReaderObject.book_IDs[2],ReaderObject.book_IDs[3]);
