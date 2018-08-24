@@ -63,6 +63,8 @@ void menu_5(){//ADD READER
         cin>>ReaderObject.FirstName;
         cout<<"> type reader's Last Name\n";
         cin>>ReaderObject.LastName;
+        cout<<"> type reader's Passport data\n";
+        cin>>ReaderObject.Passport;
         cout<<"> type reader's Library Card Number\n";
         cin>>ReaderObject.LibraryCardNmb;
         ReaderObject.book_counts = 0;
@@ -75,6 +77,7 @@ void menu_5(){//ADD READER
         file_w.write(reinterpret_cast<char*>(&ReaderObject.LibraryCardNmb),sizeof ReaderObject.LibraryCardNmb);
         file_w.write(reinterpret_cast<char*>(&ReaderObject.FirstName),sizeof ReaderObject.FirstName);
         file_w.write(reinterpret_cast<char*>(&ReaderObject.LastName),sizeof ReaderObject.LastName);
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.Passport),sizeof ReaderObject.Passport);
         file_w.write(reinterpret_cast<char*>(&ReaderObject.book_counts),sizeof ReaderObject.book_counts);
         file_w.clear();
         file_w.close(); //Закрыли открытый файл
@@ -100,8 +103,8 @@ void menu_6(){//DELETE READER
               bool Menu = true;
               while(Menu){
                   menu_title();
-                  cout << "This is \"DELETE READER\" menu\n";
-                  cout << "Print the \"LibraryCardNumber\" of a reader you want to delete\n";
+                  cout << "This is \"DELETE READER\" menu\n" << endl;
+                  cout << "Print the \"LibraryCardNumber\" of a reader you want to delete\n" << endl;
                   cin >> IDForDeleting;
           //--------------- считываем из файла reader.bin --------------------------------
               fstream file_r("reader.bin",ios::binary|ios::in);
@@ -146,6 +149,7 @@ void menu_6(){//DELETE READER
                           file_w.write(reinterpret_cast<char*>(&it->LibraryCardNmb), sizeof(it->LibraryCardNmb));
                           file_w.write(reinterpret_cast<char*>(&it->FirstName), sizeof(it->FirstName));
                           file_w.write(reinterpret_cast<char*>(&it->LastName), sizeof(it->LastName));
+                          file_w.write(reinterpret_cast<char*>(&it->Passport), sizeof(it->Passport));
                           file_w.write(reinterpret_cast<char*>(&it->book_counts), sizeof(it->book_counts));
                       }
                       file_w.clear();
@@ -153,7 +157,7 @@ void menu_6(){//DELETE READER
                      }
          //----------------------------------------------------------------------
 
-              cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
+              cout << "> type ESC to go back to previous menu\n" << " " << endl;
                   switch((ch_key = _getch()))
                   {
                   case ESC:
@@ -173,26 +177,27 @@ void menu_8(){//SHOW ALL READERS
     bool Menu = true;
     while(Menu){
         menu_title();
-        cout<<"This is \"SHOW ALL READERS\" menu\n";
+        cout << "This is \"SHOW ALL READERS\" menu\n" << endl;
             fstream file_r("reader.bin", ios::binary|ios::in);
             if (!file_r.is_open()){
              cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
             }
             else{
                     cout << "INFORMATION ABOUT READERS:" << endl;
-                    cout << "===========================================================================" << endl;
-                    cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Book_counts \t" << endl;
-                    cout << "===========================================================================" << endl;
+                    cout << "===========================================================================================" << endl;
+                    cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Passport \t" << "Book_counts \t" << endl;
+                    cout << "===========================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t\t%d",
-                        ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, ReaderObject.book_counts);
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d",
+                        ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, \
+                        ReaderObject.Passport, ReaderObject.book_counts);
                         cout << str << endl;
                     }
                     file_r.clear();
                     file_r.close();		    // закрыть прочитанный файл
             }
-        cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
+        cout << "> type ESC to go back to previous menu\n" << " " << endl;
         switch((ch_key = _getch()))
         {
         case ESC:
