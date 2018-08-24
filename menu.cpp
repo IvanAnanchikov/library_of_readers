@@ -6,35 +6,114 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
-#include <cstdio>        // для функции remove
+#include <cstdio>        //для функции remove
 #include "menu.hpp"
 #include "book.hpp"
 #include "reader.hpp"
 using namespace std;
 
-
+void remove_reader_bin(){
+    remove("reader.bin");
+//    if( remove( "reader.bin" ) != 0 )
+//        cout << "Error deleting file reader.bin" << endl;
+//    else
+//        cout << "File reader.bin successfully deleted" << endl;
+}
+void remove_book_bin(){
+    remove("book.bin");
+//    if( remove( "book.bin" ) != 0 )
+//        cout << "Error deleting file book.bin" << endl;
+//    else
+//        cout << "File book.bin successfully deleted" << endl;
+}
 
 void menu_title(){
         cout<<"* * * * * * * * * * * * * * * * * * * * *\n";
-        cout<<"* * *  CONSOLE_LIBRARY_OF_READERS  * * *\n";
+        cout<<"* * *   CONSOLE_LIBRARY_OF_READERS  * * *\n";
         cout<<"* * * * * * * * * * * * * * * * * * * * *\n";
 }
-void menu_1(){
+void menu_1(){//TAKE A BOOK
     char ch_key;
     int ReaderNumber;
     int BookNumber;
+    vector<Reader> vec;
+    Reader ReaderObject;
     bool Menu = true;
     while(Menu){
         menu_title();
         cout<<"This is \"TAKE A BOOK\" menu\n";
         cout<<" "<<endl;
         cout<<"> type reader's number of Library Card\n";
-        cin>>ReaderNumber;
-        //TODO: проверка на неправильный ввод номера читателя
+        cin>>ReaderNumber;      
         cout<<"> type book's Library Number\n";
         cin>>BookNumber;
-        //TODO: проверка на неправильный ввод номера книги
-        cout<<"book is taken OK\n";
+
+        //прочитать инфу про читателя
+        //--------------- считываем из файла reader.bin --------------------------------
+            fstream file_r("reader.bin",ios::binary|ios::in);
+            if (!file_r.is_open()) {
+             cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
+            }
+            else{
+                    unsigned int coincidence = 0;
+                    vec.clear();
+                    file_r.seekp(0,ios::beg);
+                    while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof())
+                    {
+                      if(ReaderObject.LibraryCardNmb == ReaderNumber) {
+                         //проверим можно ли выдать читателю книги или у него уже взят максимум в 4 книги
+                          coincidence++;
+                           if(ReaderObject.book_counts == MAX_BOOK_CNT){
+                            cout << "Sorry, but You already have maximum of books." << endl;
+                            //unsigned int cnt = MAX_BOOK_CNT;
+                            cout << "For our library it is: " << MAX_BOOK_CNT << " books." << endl;
+                            cout << "You should give back the books You have first. Thank you!" << endl;
+                           }
+                           else{//добавляем новую книгу и увеличиваем количество книг
+                              ReaderObject.book_IDs[ReaderObject.book_counts] = BookNumber;
+                              ReaderObject.book_counts++;
+                              cout << "book is taken OK\n" << endl;
+                           }
+                      }
+                      vec.push_back(ReaderObject);
+                    }
+                    if(coincidence == 0){cout << "Sorry, there is no reader with such Number of Library Card" << endl;}
+                    file_r.clear();
+                    file_r.close();
+                }
+            //-----------------------------------------------------------------------------
+            remove_reader_bin();
+            //--------------- записываем в файл reader.bin обновленную информацию ----------
+                    ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
+                    if (!file_w.is_open()) {
+                     cout << "The file \"reader.bin\" cannot be opened or created..." << endl;
+                    }
+                    else{
+                        for(vector<Reader>::iterator it = vec.begin(); it != vec.end(); it++)
+                        {
+                            file_w.write(reinterpret_cast<char*>(&it->LibraryCardNmb), sizeof(it->LibraryCardNmb));
+                            file_w.write(reinterpret_cast<char*>(&it->FirstName), sizeof(it->FirstName));
+                            file_w.write(reinterpret_cast<char*>(&it->LastName), sizeof(it->LastName));
+                            file_w.write(reinterpret_cast<char*>(&it->Passport), sizeof(it->Passport));
+                            file_w.write(reinterpret_cast<char*>(&it->book_counts), sizeof(it->book_counts));
+                            file_w.write(reinterpret_cast<char*>(&it->book_IDs), sizeof(it->book_IDs));
+                        }
+                        file_w.clear();
+                        file_w.close();
+                       }
+           //----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
         cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
         switch((ch_key = _getch()))
         {
@@ -140,12 +219,7 @@ void menu_4(){//DELETE BOOK
             file_r.close();
         }
 //-----------------------------------------------------------------------------
-//++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
-    if( remove( "book.bin" ) != 0 )// удаление файла
-        cout << "Error deleting file book.bin" << endl;
-    else
-        cout << "File book.bin successfully deleted" << endl;
-//++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
+remove_book_bin();
 //--------------- записываем в файл book.bin все книги кроме удаленной ----------
         ofstream file_w("book.bin",ios::binary|ios::out|ios::app);
         if (!file_w.is_open()) {
@@ -197,7 +271,7 @@ void menu_5(){//ADD READER
         cout<<"> type reader's Library Card Number\n";
         cin>>ReaderObject.LibraryCardNmb;
         ReaderObject.book_counts = 0;
-        for(int i = 0; i < 4; i++){ReaderObject.book_IDs[i] = 0;}
+        for(int i = 0; i < MAX_BOOK_CNT; i++){ReaderObject.book_IDs[i] = 0;}
 //--------------- записываем в файл Reader --------------------------------
     ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
     if (!file_w.is_open()) {
@@ -262,12 +336,7 @@ void menu_6(){//DELETE READER
                       file_r.close();
                   }
           //-----------------------------------------------------------------------------
-          //++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
-              if( remove( "reader.bin" ) != 0 )// удаление файла
-                  cout << "Error deleting file reader.bin" << endl;
-              else
-                  cout << "File reader.bin successfully deleted" << endl;
-          //++++++++++++++++удаляем файл+++++++++++++++++++++++++++++++
+          remove_reader_bin();
           //--------------- записываем в файл reader.bin всех кроме удаленного ----------
                   //fstream file_w("reader.bin",ios::binary|ios::out|ios::trunc);//trunc - уничтожить содержимое
                   ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
@@ -360,7 +429,7 @@ void menu_8(){//SHOW ALL READERS
                     cout << "===============================================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t\t%d; %d; %d; %d",
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t      %d; %d; %d; %d",
                         ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, \
                         ReaderObject.Passport, ReaderObject.book_counts, ReaderObject.book_IDs[0],\
                         ReaderObject.book_IDs[1],ReaderObject.book_IDs[2],ReaderObject.book_IDs[3]);

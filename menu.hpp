@@ -2,6 +2,8 @@
 #define MENU_HPP
 
 #define ESC 0x1B
+void remove_reader_bin();
+void remove_book_bin();
 void menu_title();
 void menu_1();
 void menu_2();
