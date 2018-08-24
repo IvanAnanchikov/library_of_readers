@@ -88,7 +88,7 @@ void menu_3(){//ADD BOOK
         file_w.write(reinterpret_cast<char*>(&BookObject.Publisher),sizeof BookObject.Publisher);
         file_w.write(reinterpret_cast<char*>(&BookObject.Count),sizeof BookObject.Count);
         file_w.clear();
-        file_w.close(); //Закрыли открытый файл
+        file_w.close();
     }
 //----------------------------------------------------------------------
     cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
@@ -164,7 +164,7 @@ void menu_4(){//DELETE BOOK
                 file_w.write(reinterpret_cast<char*>(&it->Count), sizeof(it->Count));
             }
             file_w.clear();
-            file_w.close(); //Закрыли открытый файл
+            file_w.close();
            }
 //----------------------------------------------------------------------
 
@@ -197,6 +197,7 @@ void menu_5(){//ADD READER
         cout<<"> type reader's Library Card Number\n";
         cin>>ReaderObject.LibraryCardNmb;
         ReaderObject.book_counts = 0;
+        for(int i = 0; i < 4; i++){ReaderObject.book_IDs[i] = 0;}
 //--------------- записываем в файл Reader --------------------------------
     ofstream file_w("reader.bin",ios::binary|ios::out|ios::app);
     if (!file_w.is_open()) {
@@ -208,8 +209,9 @@ void menu_5(){//ADD READER
         file_w.write(reinterpret_cast<char*>(&ReaderObject.LastName),sizeof ReaderObject.LastName);
         file_w.write(reinterpret_cast<char*>(&ReaderObject.Passport),sizeof ReaderObject.Passport);
         file_w.write(reinterpret_cast<char*>(&ReaderObject.book_counts),sizeof ReaderObject.book_counts);
+        file_w.write(reinterpret_cast<char*>(&ReaderObject.book_IDs),sizeof ReaderObject.book_IDs);
         file_w.clear();
-        file_w.close(); //Закрыли открытый файл
+        file_w.close();
     }
 //----------------------------------------------------------------------
     cout<<"> type ESC to go back to previous menu\n"<<" "<<endl;
@@ -280,9 +282,10 @@ void menu_6(){//DELETE READER
                           file_w.write(reinterpret_cast<char*>(&it->LastName), sizeof(it->LastName));
                           file_w.write(reinterpret_cast<char*>(&it->Passport), sizeof(it->Passport));
                           file_w.write(reinterpret_cast<char*>(&it->book_counts), sizeof(it->book_counts));
+                          file_w.write(reinterpret_cast<char*>(&it->book_IDs), sizeof(it->book_IDs));
                       }
                       file_w.clear();
-                      file_w.close(); //Закрыли открытый файл
+                      file_w.close();
                      }
          //----------------------------------------------------------------------
 
@@ -324,7 +327,7 @@ void menu_7(){//SHOW ALL BOOKS
                         cout << str << endl;
                     }
                     file_r.clear();
-                    file_r.close();		    // закрыть прочитанный файл
+                    file_r.close();
             }
         cout << "> type ESC to go back to previous menu\n" << " " << endl;
         switch((ch_key = _getch()))
@@ -352,18 +355,19 @@ void menu_8(){//SHOW ALL READERS
             }
             else{
                     cout << "INFORMATION ABOUT READERS:" << endl;
-                    cout << "===========================================================================================" << endl;
-                    cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Passport \t" << "Book_counts \t" << endl;
-                    cout << "===========================================================================================" << endl;
+                    cout << "===============================================================================================================" << endl;
+                    cout << "      CardNumber \t" << "FirstName \t" << "LastName \t" << "Passport \t" << "Book_counts \t" << "  Book_IDs  \t" << endl;
+                    cout << "===============================================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d",
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t\t%d; %d; %d; %d",
                         ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, \
-                        ReaderObject.Passport, ReaderObject.book_counts);
+                        ReaderObject.Passport, ReaderObject.book_counts, ReaderObject.book_IDs[0],\
+                        ReaderObject.book_IDs[1],ReaderObject.book_IDs[2],ReaderObject.book_IDs[3]);
                         cout << str << endl;
                     }
                     file_r.clear();
-                    file_r.close();		    // закрыть прочитанный файл
+                    file_r.close();
             }
         cout << "> type ESC to go back to previous menu\n" << " " << endl;
         switch((ch_key = _getch()))
