@@ -1,6 +1,6 @@
 #ifndef READER_HPP
 #define READER_HPP
-#include <string>
+//#include <string>
 #include <iostream>
 #include <fstream>
 class Reader{

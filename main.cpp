@@ -15,28 +15,32 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     char ch_key;
     bool MainMenu = true;
-    if( remove( "reader.bin" ) != 0 )// удаление файлаt
+    if( remove( "reader.bin" ) != 0 )
         cout << "Error deleting file reader.bin" << endl;
     else
         cout << "File reader.bin successfully deleted" << endl;
+    if( remove( "book.bin" ) != 0 )
+        cout << "Error deleting file book.bin" << endl;
+    else
+        cout << "File book.bin successfully deleted" << endl;
     while(MainMenu){
        /* 1 Взять книгу читателю 2 вернуть книгу
         * 3 добавить книгу 		 4 удалить книгу
         * 5 добавить читателя 	 6 удалить читателя
         * 7 показать книги 		 8 показать читателей
-        * 9 найти книгу
+        * 9 найти книгу          10 подробная информация о читателе
         */
         menu_title();
         cout<<"...press any key to continue...\n";
         cout<<" "<<endl;
         cout<<"1 - take a book \n";
         cout<<"2 - give a book back\n";
-        cout<<"3 - add a book\n";
-        cout<<"4 - delete a book\n";
-        cout<<"5 - add reader\n";
-        cout<<"6 - delete reader\n";
-        cout<<"7 - show all books\n";
-        cout<<"8 - show all readers\n";
+        cout<<"3 - Add a Book\n";
+        cout<<"4 - Delete a Book\n";
+        cout<<"5 - Add Reader\n";
+        cout<<"6 - Delete Reader\n";
+        cout<<"7 - Show all Books\n";
+        cout<<"8 - Show all Readers\n";
         cout<<"9 - find a book\n";
         cout<<"ESC - quit\n"<<" "<<endl;
         switch((ch_key = _getch()))
