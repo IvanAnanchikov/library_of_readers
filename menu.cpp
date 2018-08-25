@@ -11,20 +11,11 @@
 #include "book.hpp"
 #include "reader.hpp"
 using namespace std;
-
 void remove_reader_bin(){
     remove("reader.bin");
-//    if( remove( "reader.bin" ) != 0 )
-//        cout << "Error deleting file reader.bin" << endl;
-//    else
-//        cout << "File reader.bin successfully deleted" << endl;
 }
 void remove_book_bin(){
     remove("book.bin");
-//    if( remove( "book.bin" ) != 0 )
-//        cout << "Error deleting file book.bin" << endl;
-//    else
-//        cout << "File book.bin successfully deleted" << endl;
 }
 
 void menu_title(){
@@ -571,11 +562,11 @@ void menu_7(){//SHOW ALL BOOKS
             else{
                     cout << "INFORMATION ABOUT BOOKS:" << endl;
                     cout << "=================================================================================================================================" << endl;
-                    cout << "      UniqueNumber \t" << "BookName \t" << "Author \t\t" << "CodeISBN \t" << "Pages \t" << "Year \t" << "Publisher \t" << "Count \t" << endl;
+                    cout << "      UniqueNumber \t" << "BookName \t\t" << "Author \t\t" << "CodeISBN \t" << "Pages \t" << "Year \t" << "Publisher \t" << "Count \t" << endl;
                     cout << "=================================================================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&BookObject, sizeof(Book)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t\t%d\t\t%d\t%d\t%s\t\t%d",
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t\t%d\t\t%d\t%d\t%s\t\t\t%d",
                         BookObject.BookUniqueNumber, BookObject.BookName, BookObject.Author, \
                         BookObject.CodeISBN, BookObject.Pages, BookObject.Year, \
                         BookObject.Publisher,BookObject.Count);
@@ -615,7 +606,7 @@ void menu_8(){//SHOW ALL READERS
                     cout << "===============================================================================================================" << endl;
                     file_r.seekp(0,file_r.beg);
                     while (!file_r.read((char*)&ReaderObject, sizeof(Reader)).eof()) {
-                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t\t%d\t\t\t%d; %d; %d; %d",
+                        sprintf(str, "\t%d\t\t%s\t\t%s\t%s\t%d\t\t%d; %d; %d; %d",
                         ReaderObject.LibraryCardNmb, ReaderObject.FirstName, ReaderObject.LastName, \
                         ReaderObject.Passport, ReaderObject.book_counts, ReaderObject.book_IDs[0],\
                         ReaderObject.book_IDs[1],ReaderObject.book_IDs[2],ReaderObject.book_IDs[3]);
