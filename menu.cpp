@@ -209,15 +209,18 @@ void menu_2(){//GIVE A BOOK BACK
                             //найдем место в массиве номеров книг у читателя, где находится та книга которую он сдает
                             int Given = 0;
                             for(int i = 0; i < ReaderObject.book_counts; i++){
-                                if (ReaderObject.book_IDs[i] == BookNumber){ReaderObject.book_IDs[i] = 0; Given = i;}
+                                if (ReaderObject.book_IDs[i] == BookNumber){ReaderObject.book_IDs[i] = 0; Given = i; break;}
                             }
+                            cout << "Given+1= " << Given+1 << endl;
+                            cout << "book_counts= " << ReaderObject.book_counts << endl;
                             //уберем пропуск в массиве от сданной книги
                             if((Given + 1) == ReaderObject.book_counts){//сданная была по порядку последняя в массиве (пропуска нет)
                                 ReaderObject.book_counts--;
                             }
                             else{//сданная была не последняя в массиве (пропуск есть)
                                 for(int i = Given+1; i < ReaderObject.book_counts; i++){
-                                   ReaderObject.book_IDs[i] = ReaderObject.book_IDs[i-1];
+                                   ReaderObject.book_IDs[i-1] = ReaderObject.book_IDs[i];
+                                   ReaderObject.book_IDs[i] = 0;
                                 }
                                 ReaderObject.book_counts--;
                             }

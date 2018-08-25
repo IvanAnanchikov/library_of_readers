@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     char ch_key;
     bool MainMenu = true;
-    remove_reader_bin();
-    remove_book_bin();
+    //remove_reader_bin();
+    //remove_book_bin();
     while(MainMenu){
        /* 1 Взять книгу читателю 2 вернуть книгу
         * 3 добавить книгу 		 4 удалить книгу
